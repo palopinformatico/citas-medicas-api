@@ -1,0 +1,15 @@
+spring:
+  application:
+    name: citas-medicas-api
+  datasource:
+    url: jdbc:mysql://localhost:3306/citas_medicas
+    username: root
+    password: 
+  jpa:
+    hibernate:
+      ddl-auto: none
+    show-sql: true
+  security:
+    api-key:
+      paciente: paciente-key-123
+      medico: medico-key-456
