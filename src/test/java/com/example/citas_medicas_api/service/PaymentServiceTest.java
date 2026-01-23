@@ -41,7 +41,6 @@ class PaymentServiceTest {
 
         Patient patient = new Patient();
         patient.setId(1L);
-        //patient.setRole(UserRole.PACIENTE);
 
         Appointment appointment = new Appointment();
         appointment.setId(1L);
@@ -68,7 +67,6 @@ class PaymentServiceTest {
 
         Patient patient = new Patient();
         patient.setId(1L);
-        //patient.setRole(UserRole.PACIENTE);
 
         Appointment appointment = new Appointment();
         appointment.setPatient(patient);

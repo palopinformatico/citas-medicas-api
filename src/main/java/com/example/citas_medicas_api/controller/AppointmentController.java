@@ -1,5 +1,6 @@
 package com.example.citas_medicas_api.controller;
 
+import com.example.citas_medicas_api.model.dto.ConfirmAppointmentRequest;
 import com.example.citas_medicas_api.model.dto.CreateAppointmentRequest;
 import com.example.citas_medicas_api.model.entity.Appointment;
 import com.example.citas_medicas_api.service.AppointmentService;
@@ -30,9 +31,10 @@ public class AppointmentController {
     @PutMapping("/{id}/confirm")
     @ResponseStatus(HttpStatus.OK)
     public Appointment confirmAppointment(
-            @PathVariable Long id
+            @PathVariable Long id,
+            @RequestBody ConfirmAppointmentRequest request
     ) {
-        return service.confirmAppointment(id);
+        return service.confirmAppointment(id, request.getStatus());
     }
 
     @GetMapping("/doctor/{doctorId}")

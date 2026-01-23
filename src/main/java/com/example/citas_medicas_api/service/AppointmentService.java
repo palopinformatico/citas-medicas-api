@@ -37,18 +37,18 @@ public class AppointmentService {
             throw new BusinessException("Solo los pacientes pueden crear citas");
         }
 
-        // 2️⃣ Validar horario
+        // Validar horario
         validateSchedule(request.getTime());
 
-        // 3️⃣ Validar paciente
+        // Validar paciente
         Patient patient = patientRepository.findById(request.getPatientId())
                 .orElseThrow(() -> new BusinessException("Paciente no encontrado"));
 
-        // 3️⃣ Validar médico
+        // Validar médico
         Doctor doctor = doctorRepository.findById(request.getDoctorId())
                 .orElseThrow(() -> new BusinessException("Médico no encontrado"));
 
-        // 4️⃣ Validar disponibilidad
+        // Validar disponibilidad
         boolean exists = appointmentRepository.existsByDoctorIdAndDateAndTime(
                 doctor.getId(),
                 request.getDate(),
@@ -59,7 +59,7 @@ public class AppointmentService {
             throw new BusinessException("Horario no disponible");
         }
 
-        // 5️⃣ Crear cita
+        // Crear cita
         Appointment appointment = new Appointment();
         appointment.setPatient(patient);
         appointment.setDoctor(doctor);
@@ -85,13 +85,13 @@ public class AppointmentService {
         }
     }
 
-    public Appointment confirmAppointment(Long appointmentId) {
+    public Appointment confirmAppointment(Long appointmentId, String status) {
 
-        // 1️⃣ Buscar cita
+        // Buscar cita
         Appointment appointment = appointmentRepository.findById(appointmentId)
                 .orElseThrow(() -> new BusinessException("Cita no encontrada"));
 
-        // 4️⃣ Validar estado
+        // Validar estado
         if (appointment.getStatus() == AppointmentStatus.CONFIRMADA) {
             throw new BusinessException("La cita ya está confirmada");
         }
@@ -100,19 +100,25 @@ public class AppointmentService {
             throw new BusinessException("La cita debe estar PAGADA para confirmarla");
         }
 
-        // 5️⃣ Confirmar
-        appointment.setStatus(AppointmentStatus.CONFIRMADA);
+        // Confirmar o rechazar
+        if(status.compareTo(AppointmentStatus.CONFIRMADA.toString()) == 0){
+            appointment.setStatus(AppointmentStatus.CONFIRMADA);
+        }
+
+        if(status.compareTo(AppointmentStatus.RECHAZADA.toString()) == 0){
+            appointment.setStatus(AppointmentStatus.RECHAZADA);
+        }
 
         return appointmentRepository.save(appointment);
     }
 
     public List<Appointment> getAppointments(Long doctorId) {
 
-        // 3️⃣ Validar médico
+        // Validar médico
         Doctor doctor = doctorRepository.findById(doctorId)
                 .orElseThrow(() -> new BusinessException("Médico no encontrado"));
 
-        // 3️⃣ Buscar citas
+        // Buscar citas
         return appointmentRepository.findByDoctorId(
                 doctor.getId()
         );
@@ -120,17 +126,11 @@ public class AppointmentService {
 
     public List<Appointment> getAgendaByPatient(Long patientId) {
 
-        // 1️⃣ Control de acceso
-        /*if (user.getRole() == UserRole.PACIENTE &&
-            !user.getId().equals(patientId)) {
-            throw new BusinessException("No puede ver la agenda de otro paciente");
-        }*/
-
-        // 2️⃣ (Opcional) Validar que el paciente exista
+        // Validar que el paciente exista
         Patient patient = patientRepository.findById(patientId)
                 .orElseThrow(() -> new BusinessException("Paciente no encontrado"));
 
-        // 3️⃣ Buscar agenda
+        // Buscar agenda
         return appointmentRepository.findByPatientIdOrderByDateAscTimeAsc(patient.getId());
     }
 }

@@ -30,31 +30,21 @@ public class PaymentService {
 
     public void payAppointment(Long appointmentId) {
 
-        // 1️⃣ Buscar cita
+        // Buscar cita
         Appointment appointment = appointmentRepository.findById(appointmentId)
                 .orElseThrow(() -> new BusinessException("Cita no encontrada"));
 
-        // 2️⃣ Validar rol
-        /*if (user.getRole() != UserRole.PACIENTE) {
-            throw new BusinessException("Solo el paciente puede pagar la cita");
-        }*/
-
-        // 3️⃣ Validar dueño de la cita
-        /*if (!appointment.getPatient().getId().equals(user.getId())) {
-            throw new BusinessException("No puede pagar una cita que no es suya");
-        }*/
-
-        // 4️⃣ Validar estado
+        // Validar estado
         if (appointment.getStatus() != AppointmentStatus.PENDIENTE) {
             throw new BusinessException("La cita no está pendiente de pago");
         }
 
-        // 5️⃣ Validar pago previo
+        // Validar pago previo
         if (paymentRepository.existsByAppointmentId(appointmentId)) {
             throw new BusinessException("La cita ya fue pagada");
         }
 
-        // 6️⃣ Simular pago sandbox
+        // Simular pago sandbox
         BigDecimal amount = BigDecimal.valueOf(20000);
         PaymentResult result = paymentGateway.pay(amount);
 
@@ -62,7 +52,7 @@ public class PaymentService {
             throw new BusinessException("Pago rechazado");
         }
 
-        // 7️⃣ Guardar pago
+        // Guardar pago
         Payment payment = new Payment();
         payment.setAppointment(appointment);
         payment.setAmount(amount);
@@ -71,7 +61,7 @@ public class PaymentService {
 
         paymentRepository.save(payment);
 
-        // 8️⃣ Actualizar estado de la cita
+        // Actualizar estado de la cita
         appointment.setStatus(AppointmentStatus.PAGADA);
         appointmentRepository.save(appointment);
     }

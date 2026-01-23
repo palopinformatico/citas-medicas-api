@@ -38,11 +38,9 @@ class AppointmentServiceTest {
 
         Patient patient = new Patient();
         patient.setId(1L);
-        //patient.setRole(UserRole.PACIENTE);
 
         Doctor doctor = new Doctor();
         doctor.setId(2L);
-        //doctor.setRole(UserRole.MEDICO);
 
         when(patientRepository.findById(1L)).thenReturn(Optional.of(patient));
         when(doctorRepository.findById(2L)).thenReturn(Optional.of(doctor));
@@ -67,7 +65,6 @@ class AppointmentServiceTest {
 
         Doctor doctor = new Doctor();
         doctor.setId(1L);
-        //doctor.setRole(UserRole.MEDICO);
 
         appointment.setDoctor(doctor);
 
@@ -76,7 +73,7 @@ class AppointmentServiceTest {
 
         assertThrows(
                 BusinessException.class,
-                () -> appointmentService.confirmAppointment(1L)
+                () -> appointmentService.confirmAppointment(1L, "CONFIRMADA")
         );
     }
 }
